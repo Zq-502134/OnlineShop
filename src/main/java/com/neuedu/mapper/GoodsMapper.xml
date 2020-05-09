@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neuedu.mapper.GoodsMapper" >
+  <resultMap id="GoodsResultMap" type="Goods" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="typeid" property="typeid" jdbcType="INTEGER" />
+    <result column="imgpath" property="imgpath" jdbcType="VARCHAR" />
+    <result column="price" property="price" jdbcType="DOUBLE" />
+    <result column="goodsDesc" property="goodsdesc" jdbcType="VARCHAR" />
+    <result column="createTime" property="createtime" jdbcType="TIMESTAMP" />
+    <result column="state" property="state" jdbcType="INTEGER"/>
+  </resultMap>
+  <sql id="Goods_Column_List" >
+    id, name, typeid, imgpath, price, goodsDesc, createTime,state
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="GoodsResultMap" parameterType="Integer" >
+    select 
+    <include refid="Goods_Column_List" />
+    from goods
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="Integer" >
+    delete from goods
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insert" parameterType="Goods" >
+    insert into goods (id, name, typeid, 
+      imgpath, price, goodsDesc, 
+      createTime)
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{typeid,jdbcType=INTEGER}, 
+      #{imgpath,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL}, #{goodsdesc,jdbcType=VARCHAR}, 
+      #{createtime,jdbcType=TIMESTAMP})
+  </insert>
+
+  <insert id="insertSelective" parameterType="Goods" >
+    insert into goods
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="typeid != null" >
+        typeid,
+      </if>
+      <if test="imgpath != null" >
+        imgpath,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="goodsdesc != null" >
+        goodsDesc,
+      </if>
+      <if test="createtime != null" >
+        createTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="typeid != null" >
+        #{typeid,jdbcType=INTEGER},
+      </if>
+      <if test="imgpath != null" >
+        #{imgpath,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="goodsdesc != null" >
+        #{goodsdesc,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null" >
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="Goods" >
+    update goods
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="typeid != null" >
+        typeid = #{typeid,jdbcType=INTEGER},
+      </if>
+      <if test="imgpath != null" >
+        imgpath = #{imgpath,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="goodsdesc != null" >
+        goodsDesc = #{goodsdesc,jdbcType=VARCHAR},
+      </if>
+    <!--  <if test="createtime != null" >
+        createTime = #{createtime,jdbcType=TIMESTAMP},
+      </if>-->
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="Goods" >
+    update goods
+    set name = #{name,jdbcType=VARCHAR},
+      typeid = #{typeid,jdbcType=INTEGER},
+      imgpath = #{imgpath,jdbcType=VARCHAR},
+      price = #{price,jdbcType=DECIMAL},
+      goodsDesc = #{goodsdesc,jdbcType=VARCHAR},
+      createTime = #{createtime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateState" parameterType="java.util.Map">
+    update goods
+    set state = #{state,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <sql id="conditionssql">
+    <where>
+    state!=0
+      <if test="name != null and name != ''" >
+        AND name like concat('%',#{name,jdbcType=VARCHAR},'%')
+      </if>
+      <if test="typeid != null and typeid != ''" >
+        AND typeid = #{typeid,jdbcType=INTEGER}
+      </if>
+      <if test="imgpath != null" >
+        AND imgpath = #{imgpath,jdbcType=VARCHAR}
+      </if>
+      <if test="price != null" >
+        AND price = #{price,jdbcType=DECIMAL}
+      </if>
+      <if test="goodsdesc != null" >
+        AND goodsDesc = #{goodsdesc,jdbcType=VARCHAR}
+      </if>
+      <if test="createtime != null" >
+        AND createTime = #{createtime,jdbcType=TIMESTAMP}
+      </if>
+    </where>
+  </sql>
+  <select id="getGoodsListByContions" parameterType="java.util.Map" resultMap="GoodsResultMap">
+    SELECT <include refid="Goods_Column_List" />
+    FROM goods
+    <include refid="conditionssql"/>
+    <bind name="offset" value="(pageNum-1)*pageSize"/>
+    LIMIT #{offset,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
+    </select>
+
+  <select id="getCount" parameterType="java.util.Map" resultType="Integer">
+    select count(id)
+    from goods
+    <include refid="conditionssql"/>
+  </select>
+</mapper>

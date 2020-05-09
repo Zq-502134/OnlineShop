@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neuedu.mapper.OrderMapper">
+  <resultMap id="OrderResultMap" type="Order">
+    <id column="orderid" jdbcType="INTEGER" property="orderid" />
+    <result column="userid" jdbcType="INTEGER" property="userid" />
+    <result column="total" jdbcType="DOUBLE" property="total" />
+    <result column="paytype" jdbcType="INTEGER" property="paytype" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="shipname" jdbcType="VARCHAR" property="shipname" />
+    <result column="shipcode" jdbcType="VARCHAR" property="shipcode" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="closetime" jdbcType="TIMESTAMP" property="closetime" />
+    <result column="addressId" jdbcType="INTEGER" property="addressid" />
+    <result column="orderNo" jdbcType="VARCHAR" property="orderno" />
+  </resultMap>
+  
+  <resultMap id="OrderUnionResultMap" type="Order" extends="OrderResultMap">
+    <association property="address" javaType="Address">
+      <result column="address" property="address" jdbcType="VARCHAR" />
+    </association>
+    <collection property="orderDetailList" ofType="OrderDetail">
+      <result column="itemid" property="itemid" jdbcType="INTEGER" />
+      <result column="price" property="price" jdbcType="DOUBLE" />
+      <result column="num" property="num" jdbcType="INTEGER" />
+      <result column="total" property="total" jdbcType="DOUBLE" />
+      <association property="goods" javaType="Goods">
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="imgpath" property="imgpath" jdbcType="VARCHAR" />
+        <result column="price" property="price" jdbcType="DOUBLE" />
+      </association>
+    </collection>
+  </resultMap>
+
+  <select id="getOrderUnionList" parameterType="java.lang.Integer" resultMap="OrderUnionResultMap">
+    select r.*,rd.itemid,rd.price,rd.num,rd.total,ud.address,g.name,g.price,g.imgpath
+    from `order` r,order_goods_detail rd,user_address ud,goods g
+    where r.addressId = ud.id
+    and r.orderid = rd.orderid
+    and rd.itemid = g.id
+    and r.orderid = #{order,jdbcType =INTEGER }
+  </select>
+
+  <sql id="Order_Column_List">
+    orderid, userid, total, paytype, status, shipname, shipcode, createtime, closetime, 
+    addressId, orderNo
+  </sql>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="OrderResultMap">
+    select 
+    <include refid="Order_Column_List" />
+    from order
+    where orderid = #{orderid,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from order
+    where orderid = #{orderid,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insert" parameterType="Order">
+    insert into order (orderid, userid, total, 
+      paytype, status, shipname, 
+      shipcode, createtime, closetime, 
+      addressId, orderNo)
+    values (#{orderid,jdbcType=INTEGER}, #{userid,jdbcType=INTEGER}, #{total,jdbcType=DOUBLE},
+      #{paytype,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, #{shipname,jdbcType=VARCHAR}, 
+      #{shipcode,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, #{closetime,jdbcType=TIMESTAMP}, 
+      #{addressid,jdbcType=INTEGER}, #{orderno,jdbcType=VARCHAR})
+  </insert>
+
+  <insert id="insertSelective" parameterType="Order">
+    insert into order
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="orderid != null">
+        orderid,
+      </if>
+      <if test="userid != null">
+        userid,
+      </if>
+      <if test="total != null">
+        total,
+      </if>
+      <if test="paytype != null">
+        paytype,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="shipname != null">
+        shipname,
+      </if>
+      <if test="shipcode != null">
+        shipcode,
+      </if>
+      <if test="createtime != null">
+        createtime,
+      </if>
+      <if test="closetime != null">
+        closetime,
+      </if>
+      <if test="addressid != null">
+        addressId,
+      </if>
+      <if test="orderno != null">
+        orderNo,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="orderid != null">
+        #{orderid,jdbcType=INTEGER},
+      </if>
+      <if test="userid != null">
+        #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="total != null">
+        #{total,jdbcType=DOUBLE},
+      </if>
+      <if test="paytype != null">
+        #{paytype,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="shipname != null">
+        #{shipname,jdbcType=VARCHAR},
+      </if>
+      <if test="shipcode != null">
+        #{shipcode,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null">
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="closetime != null">
+        #{closetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addressid != null">
+        #{addressid,jdbcType=INTEGER},
+      </if>
+      <if test="orderno != null">
+        #{orderno,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="Order">
+    update order
+    <set>
+      <if test="userid != null">
+        userid = #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="total != null">
+        total = #{total,jdbcType=DOUBLE},
+      </if>
+      <if test="paytype != null">
+        paytype = #{paytype,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="shipname != null">
+        shipname = #{shipname,jdbcType=VARCHAR},
+      </if>
+      <if test="shipcode != null">
+        shipcode = #{shipcode,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null">
+        createtime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="closetime != null">
+        closetime = #{closetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="addressid != null">
+        addressId = #{addressid,jdbcType=INTEGER},
+      </if>
+      <if test="orderno != null">
+        orderNo = #{orderno,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where orderid = #{orderid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="Order">
+    update order
+    set userid = #{userid,jdbcType=INTEGER},
+      total = #{total,jdbcType=DOUBLE},
+      paytype = #{paytype,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      shipname = #{shipname,jdbcType=VARCHAR},
+      shipcode = #{shipcode,jdbcType=VARCHAR},
+      createtime = #{createtime,jdbcType=TIMESTAMP},
+      closetime = #{closetime,jdbcType=TIMESTAMP},
+      addressId = #{addressid,jdbcType=INTEGER},
+      orderNo = #{orderno,jdbcType=VARCHAR}
+    where orderid = #{orderid,jdbcType=INTEGER}
+  </update>
+
+  <select id="getOrderList" parameterType="java.lang.Integer" resultMap="OrderResultMap">
+    select
+    <include refid="Order_Column_List"/>
+    from `order`
+    where userid = #{userid,jdbcType=INTEGER}
+    order by createtime desc
+  </select>
+</mapper>

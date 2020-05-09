@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.neuedu.mapper.CartMapper" >
+  <resultMap id="CartResultMap" type="Cart" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="goods_id" property="goodsId" jdbcType="INTEGER" />
+    <result column="num" property="num" jdbcType="INTEGER" />
+    <result column="userid" property="userid" jdbcType="INTEGER" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <!--  一对一    -->
+  <resultMap type="Cart" id="CartGoodsResultMap" extends="CartResultMap">
+    <association property="goods" javaType="Goods">
+      <result column="name" property="name" jdbcType="VARCHAR" />
+      <result column="imgpath" property="imgpath" jdbcType="VARCHAR" />
+      <result column="price" property="price" jdbcType="DOUBLE" />
+    </association>
+  </resultMap>
+  <select id="getCartListByUserId" parameterType="INTEGER" resultMap="CartGoodsResultMap">
+    select c.id,goods_id,num,create_date,g.name,g.imgpath,g.price
+    from shopping_car c,goods g
+    where g.id = c.goods_id and c.userid = #{userid,jdbcType=INTEGER}
+    order by create_date desc
+  </select>
+
+  <sql id="Cart_Column_List" >
+    id, goods_id, num, userid, create_date
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="CartResultMap" parameterType="Integer" >
+    select 
+    <include refid="Cart_Column_List" />
+    from shopping_car
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="Integer" >
+    delete from shopping_car
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="Cart" >
+    insert into shopping_car (id, goods_id, num, 
+      userid, create_date)
+    values (#{id,jdbcType=INTEGER}, #{goodsId,jdbcType=INTEGER}, #{num,jdbcType=INTEGER}, 
+      #{userid,jdbcType=INTEGER}, #{createDate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="Cart" >
+    insert into shopping_car
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="goodsId != null" >
+        goods_id,
+      </if>
+      <if test="num != null" >
+        num,
+      </if>
+      <if test="userid != null" >
+        userid,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="goodsId != null" >
+        #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="num != null" >
+        #{num,jdbcType=INTEGER},
+      </if>
+      <if test="userid != null" >
+        #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="Cart" >
+    update shopping_car
+    <set >
+      <if test="goodsId != null" >
+        goods_id = #{goodsId,jdbcType=INTEGER},
+      </if>
+      <if test="num != null" >
+        num = #{num,jdbcType=INTEGER},
+      </if>
+      <if test="userid != null" >
+        userid = #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="Cart" >
+    update shopping_car
+    set goods_id = #{goodsId,jdbcType=INTEGER},
+      num = #{num,jdbcType=INTEGER},
+      userid = #{userid,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
