@@ -155,7 +155,7 @@
     SELECT <include refid="Goods_Column_List" />
     FROM goods
     <include refid="conditionssql"/>
-    <bind name="offset" value="(pageNum-1)*pageSize"/>
+    <bind name="offset" value="(pageNo-1)*pageSize"/>
     LIMIT #{offset,jdbcType=INTEGER},#{pageSize,jdbcType=INTEGER}
     </select>
 

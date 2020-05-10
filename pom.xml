@@ -148,9 +148,13 @@
             <artifactId>spring-webmvc</artifactId>
             <version>5.2.4.RELEASE</version>
         </dependency>
-
-
+        <dependency>
+            <groupId>com.alipay.sdk</groupId>
+            <artifactId>alipay-sdk-java</artifactId>
+            <version>4.9.153.ALL</version>
+        </dependency>
     </dependencies>
+
     <build>
         <resources>
             <resource>
