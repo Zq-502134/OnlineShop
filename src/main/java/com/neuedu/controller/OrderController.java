@@ -17,13 +17,18 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    @RequestMapping(value = "/list",method = RequestMethod.GET)
-    List<Order> getOrderList(@RequestParam("userid") Integer userId){
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    List<Order> getOrderList(@RequestParam("userid") Integer userId) {
         return orderService.getOrderList(userId);
     }
 
-    @RequestMapping(value = "/unionlist",method = RequestMethod.GET)
-    List<Order> getOrderUnionList(@RequestParam("orderid") Integer orderId){
+    @RequestMapping(value = "/unionlist", method = RequestMethod.GET)
+    List<Order> getOrderUnionList(@RequestParam("orderid") Integer orderId) {
         return orderService.getOrderUnionList(orderId);
+    }
+
+    @RequestMapping(value = "/unionlistByUserId", method = RequestMethod.GET)
+    private List<Order> getUnionOrderListByUserId(@RequestParam("userid") Integer userId) {
+        return orderService.getOrderUnionListByUserId(userId);
     }
 }

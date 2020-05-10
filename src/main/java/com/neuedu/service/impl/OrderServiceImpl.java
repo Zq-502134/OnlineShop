@@ -11,6 +11,7 @@ import java.util.List;
 public class OrderServiceImpl  implements OrderService {
     @Autowired
     private OrderMapper orderMapper;
+
     @Override
     public List<Order> getOrderList(Integer userId) {
         return orderMapper.getOrderList(userId);
@@ -19,5 +20,10 @@ public class OrderServiceImpl  implements OrderService {
     @Override
     public List<Order> getOrderUnionList(Integer orderId) {
         return orderMapper.getOrderUnionList(orderId);
+    }
+
+    @Override
+    public List<Order> getOrderUnionListByUserId(Integer userId) {
+        return orderMapper.getOrderUnionListByUserId(userId);
     }
 }

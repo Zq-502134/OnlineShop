@@ -20,4 +20,7 @@ public interface OrderMapper {
     List<Order> getOrderList(Integer userId);
 
     List<Order> getOrderUnionList(Integer orederId);
+
+    List<Order> getOrderUnionListByUserId(Integer userId);
+
 }

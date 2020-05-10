@@ -41,14 +41,26 @@
     and r.orderid = #{order,jdbcType =INTEGER }
   </select>
 
+  <select id="getOrderUnionListByUserId" parameterType="java.lang.Integer" resultMap="OrderUnionResultMap">
+    select r.*,
+        rd.`itemid`,rd.`price`,rd.`num`,rd.`total`,
+        ud.`address`,g.name,g.`price`,g.`imgpath`
+    from `order` r,
+        `order_goods_detail` rd,`user_address` ud,`goods` g
+    where r.`addressId`=ud.`id`
+        and r.`orderid`=rd.`orderid`
+        and rd.`itemid`=g.`id`
+        and r.userid = #{userId,jdbcType=INTEGER}
+  </select>
+
   <sql id="Order_Column_List">
     orderid, userid, total, paytype, status, shipname, shipcode, createtime, closetime, 
     addressId, orderNo
   </sql>
 
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="OrderResultMap">
-    select 
-    <include refid="Order_Column_List" />
+    select
+    <include refid="Order_Column_List"/>
     from order
     where orderid = #{orderid,jdbcType=INTEGER}
   </select>
